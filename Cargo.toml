@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "aliri_extra_reqwest",
+    "aliri_keycloak"
+]
+
+[patch.crates-io]
+aliri = { version = "0.6.1", git = "https://github.com/erritis/aliri", branch = "develop" }
+aliri_reqwest = { version = "0.4.1", git = "https://github.com/erritis/aliri", branch = "develop" }
+aliri_tokens = { version = "0.2.0", git = "https://github.com/erritis/aliri", branch = "develop" }
+aliri_clock = { version = "0.1.4", git = "https://github.com/erritis/aliri", branch = "develop" }
