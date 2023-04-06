@@ -6,14 +6,11 @@ use aliri_reqwest::AccessTokenMiddleware;
 use aliri_tokens::{sources, TokenLifetimeConfig, TokenWatcher, jitter::NullJitter, backoff::ErrorBackoffConfig};
 
 use clap::Parser;
-
-use reqwest::Client;
 use reqwest_middleware::{ClientWithMiddleware, ClientBuilder};
 use predicates::prelude::predicate;
 
 use opts::{AuthClientOpts, AuthOpts, ContentTypeEnum};
 use error::Result;
-
 
 
 impl From<ContentTypeEnum> for sources::oauth2::ContentType {
@@ -24,8 +21,6 @@ impl From<ContentTypeEnum> for sources::oauth2::ContentType {
         }
     }
 }
-
-
 
 pub async fn auth_client() -> crate::Result<ClientWithMiddleware> {
 
@@ -48,7 +43,7 @@ pub async fn auth_client() -> crate::Result<ClientWithMiddleware> {
     };
 
     let fallback = sources::oauth2::ClientCredentialsTokenSource::new(
-        client,
+        client.clone(),
         opts.token_url,
         credentials,
         TokenLifetimeConfig::new(0.75, DurationSecs(opts.access_token_lifetime)),
@@ -84,7 +79,6 @@ pub struct AuthClient {
     pub host_url: String,
     pub realm: String
 }
-
 
 pub async fn auth_client_with_sso_info() -> crate::Result<AuthClient> {
 

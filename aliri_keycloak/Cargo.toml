@@ -1,6 +1,6 @@
 [package]
 name = "aliri_keycloak"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -11,8 +11,7 @@ default-tls = [ "aliri_extra_reqwest/default-tls" ]
 
 [dependencies]
 reqwest-middleware = "0.2.0"
-
-aliri_extra_reqwest = { version = "0.0.1", path = "../aliri_extra_reqwest" }
+aliri_extra_reqwest = { version = "0.1.0", path = "../aliri_extra_reqwest" }
 itertools = "0.10.5"
 
 anyhow = "1.0.70"
