@@ -1,15 +1,18 @@
 mod opts;
+mod error;
 
 use aliri_clock::DurationSecs;
 use aliri_reqwest::AccessTokenMiddleware;
 use aliri_tokens::{sources, TokenLifetimeConfig, TokenWatcher, jitter::NullJitter, backoff::ErrorBackoffConfig};
 
 use clap::Parser;
-use opts::{AuthClientOpts, AuthOpts, ContentTypeEnum};
 
 use reqwest::Client;
 use reqwest_middleware::{ClientWithMiddleware, ClientBuilder};
 use predicates::prelude::predicate;
+
+use opts::{AuthClientOpts, AuthOpts, ContentTypeEnum};
+use error::Result;
 
 
 
@@ -24,14 +27,16 @@ impl From<ContentTypeEnum> for sources::oauth2::ContentType {
 
 
 
-pub async fn auth_client() -> ClientWithMiddleware {
+pub async fn auth_client() -> crate::Result<ClientWithMiddleware> {
 
     let opts = AuthClientOpts::parse();
 
-    let client = reqwest::Client::builder()
+    let client = match reqwest::Client::builder()
     .https_only(false)
-    .build()
-    .unwrap();
+    .build() {
+        Ok(client) => client,
+        Err(err) => return Err(err.into())
+    };
 
     let credentials = sources::oauth2::dto::ClientCredentialsWithAudience {
         credentials: sources::oauth2::dto::ClientCredentials {
@@ -56,18 +61,21 @@ pub async fn auth_client() -> ClientWithMiddleware {
     .with_cache("file", file_source)
     ;
 
-    let token_watcher = TokenWatcher::spawn_from_token_source(
+    let token_watcher = match TokenWatcher::spawn_from_token_source(
         token_source,
         NullJitter,
         ErrorBackoffConfig::default()
-    ).await.unwrap();
+    ).await {
+        Ok(token_watcher) => token_watcher,
+        Err(err) => return Err(err.into())
+    };
 
     
     let client = ClientBuilder::new(Client::default())
     .with(AccessTokenMiddleware::new(token_watcher).with_predicate(predicate::always()))
     .build();
 
-    client
+    Ok(client)
 }
 
 #[derive(Clone, Debug)]
@@ -78,15 +86,11 @@ pub struct AuthClient {
 }
 
 
-pub async fn auth_client_with_sso_info() -> AuthClient {
+pub async fn auth_client_with_sso_info() -> crate::Result<AuthClient> {
 
     let opts = AuthOpts::parse();
 
-    let client = auth_client().await;
+    let client = auth_client().await?;
 
-    AuthClient {
-        client,
-        host_url: opts.host_url,
-        realm: opts.realm
-    }
+    Ok(AuthClient { client, host_url: opts.host_url, realm: opts.realm })
 }
