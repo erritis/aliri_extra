@@ -71,7 +71,7 @@ pub async fn auth_client() -> crate::Result<ClientWithMiddleware> {
     };
 
     
-    let client = ClientBuilder::new(Client::default())
+    let client = ClientBuilder::new(client)
     .with(AccessTokenMiddleware::new(token_watcher).with_predicate(predicate::always()))
     .build();
 
