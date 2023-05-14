@@ -1,7 +1,8 @@
 [workspace]
 members = [
     "aliri_extra_reqwest",
-    "aliri_keycloak"
+    "aliri_keycloak",
+    "aliri_claims"
 ]
 
 [patch.crates-io]

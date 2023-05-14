@@ -1,0 +1,22 @@
+[package]
+name = "nested-env-parser"
+version = "0.1.0"
+edition = "2021"
+description = "aliri_claims is a crate with ready-made claims structures for deserialization and subsequent use in the project."
+keywords = [ "claims", "aliri", "oidc", "oauth2"]
+categories = [ "authentication", "web-programming" ]
+authors = ["Erritis <serg.shehov@tutanota.com>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/erritis/aliri_claims"
+documentation = "https://docs.rs/aliri_claims"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+
+aliri = "0.6.1"
+aliri_oauth2 = { version = "0.9.0" }
+aliri_clock = { version = "0.1.4", features = ["serde"] }
+
+openidconnect = { version = "3.0" }
